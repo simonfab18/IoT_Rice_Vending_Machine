@@ -1,0 +1,44 @@
+# Arduino WiFi Configuration for Hostinger
+
+## Update these values in rice.ino:
+
+### WiFi Settings (Lines 32-33):
+```cpp
+const char* ssid = "YOUR_WIFI_NAME";  // Replace with your actual WiFi name
+const char* password = "YOUR_WIFI_PASSWORD";  // Replace with your actual WiFi password
+```
+
+### Server URLs (Lines 34-36):
+```cpp
+const char* serverUrl = "https://orange-donkey-160020.hostingersite.com/rice_dispenser_iot-master/upload.php";
+const char* configUrl = "https://orange-donkey-160020.hostingersite.com/rice_dispenser_iot-master/get_rice_config.php";
+const char* inventoryUrl = "https://orange-donkey-160020.hostingersite.com/rice_dispenser_iot-master/update_inventory.php";
+```
+
+## Important Notes:
+
+1. **WiFi Credentials**: Make sure to update the WiFi name and password with your actual network details
+2. **HTTPS**: The URLs now use HTTPS for security
+3. **Domain**: All URLs point to your Hostinger domain: orange-donkey-160020.hostingersite.com
+4. **Path**: The path includes /rice_dispenser_iot-master/ which matches your folder structure
+
+## Testing Steps:
+
+1. **Upload the updated Arduino code** to your ESP32
+2. **Open Serial Monitor** (115200 baud rate)
+3. **Check for connection messages**:
+   - "WiFi Connected successfully!"
+   - "IP Address: [your IP]"
+   - "Config] Successfully fetched: [rice data]"
+
+## Troubleshooting:
+
+- **If WiFi fails**: Check your WiFi name and password
+- **If server connection fails**: Verify the domain is accessible from your browser
+- **If HTTPS fails**: Some ESP32 boards may need additional SSL certificate handling
+
+## Your Hostinger Details:
+- **Website**: orange-donkey-160020.hostingersite.com
+- **IP**: 5.183.10.21
+- **Database**: u895570689_rice_dispenser
+- **User**: u895570689_farmart

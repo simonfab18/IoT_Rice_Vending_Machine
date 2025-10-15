@@ -1,0 +1,121 @@
+// Arduino Code Modifications for Logging
+// This file shows the specific changes needed in rice/rice.ino
+
+// 1. ADD THIS URL CONSTANT (around line 45, after other URL constants):
+const char* logsUrl = "https://orange-donkey-160020.hostingersite.com/rice_dispenser_iot-master/arduino_logs_api.php";
+
+// 2. ADD THESE MACROS (near the top with other defines, around line 50):
+#define LOG_DEBUG(msg, cat) do { Serial.println("[DEBUG] " + String(msg)); sendLogToServer("DEBUG", String(msg), String(cat)); } while(0)
+#define LOG_INFO(msg, cat) do { Serial.println("[INFO] " + String(msg)); sendLogToServer("INFO", String(msg), String(cat)); } while(0)
+#define LOG_WARNING(msg, cat) do { Serial.println("[WARNING] " + String(msg)); sendLogToServer("WARNING", String(msg), String(cat)); } while(0)
+#define LOG_ERROR(msg, cat) do { Serial.println("[ERROR] " + String(msg)); sendLogToServer("ERROR", String(msg), String(cat)); } while(0)
+#define LOG_SYSTEM(msg, cat) do { Serial.println("[SYSTEM] " + String(msg)); sendLogToServer("SYSTEM", String(msg), String(cat)); } while(0)
+
+// 3. ADD THIS FUNCTION (after sendInventoryToServer function, around line 380):
+void sendLogToServer(String level, String message, String category = "") {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(logsUrl);
+    http.addHeader("Content-Type", "application/json");
+    
+    // Create JSON payload
+    String jsonPayload = "{";
+    jsonPayload += "\"machine_id\":\"rice_dispenser_1\",";
+    jsonPayload += "\"log_level\":\"" + level + "\",";
+    jsonPayload += "\"log_message\":\"" + message + "\"";
+    if (category.length() > 0) {
+      jsonPayload += ",\"log_category\":\"" + category + "\"";
+    }
+    jsonPayload += "}";
+    
+    int httpResponseCode = http.POST(jsonPayload);
+    http.end();
+  }
+}
+
+// 4. REPLACE THESE SPECIFIC Serial.println CALLS:
+
+// In setup() function (around line 720):
+// OLD: Serial.println("\n[WiFi] Starting WiFi connection...");
+// NEW: LOG_SYSTEM("Starting WiFi connection...", "System");
+
+// In connectToWiFi() function (around line 218):
+// OLD: Serial.println("\n[WiFi] Connected to " + String(wifi_ssid_1));
+// NEW: LOG_INFO("Connected to " + String(wifi_ssid_1), "WiFi");
+
+// In connectToWiFi() function (around line 275):
+// OLD: Serial.println("[WiFi] Connected successfully!");
+// NEW: LOG_INFO("Connected successfully!", "WiFi");
+
+// In fetchRiceConfig() function (around line 1762):
+// OLD: Serial.println("[Config] Attempting to fetch rice configuration...");
+// NEW: LOG_INFO("Attempting to fetch rice configuration...", "Config");
+
+// In fetchRiceConfig() function (around line 1946):
+// OLD: Serial.printf("[Config] Success! A: %s @ %d (%.1fkg), B: %s @ %d (%.1fkg)\n", ...);
+// NEW: LOG_INFO("Rice configuration loaded successfully", "Config");
+
+// In loop() function for button detection (around line 934):
+// OLD: Serial.println("[Button] A pressed - rice selection triggered");
+// NEW: LOG_DEBUG("Button A pressed - rice selection triggered", "Button");
+
+// In loop() function for button detection (around line 940):
+// OLD: Serial.println("[Button] B pressed - rice selection triggered");
+// NEW: LOG_DEBUG("Button B pressed - rice selection triggered", "Button");
+
+// In sendDataToServer() function (around line 810):
+// OLD: Serial.println("[Database] Attempting to connect to database...");
+// NEW: LOG_INFO("Attempting to connect to database...", "Database");
+
+// In sendDataToServer() function (around line 857):
+// OLD: Serial.println("[WiFi] WiFi Disconnected - Cannot send data to database");
+// NEW: LOG_ERROR("WiFi Disconnected - Cannot send data to database", "WiFi");
+
+// In sendInventoryToServer() function (around line 351):
+// OLD: Serial.println("[Inventory] Sending inventory data to server...");
+// NEW: LOG_INFO("Sending inventory data to server...", "Inventory");
+
+// In sendInventoryToServer() function (around line 380):
+// OLD: Serial.println("[Inventory] WiFi Disconnected - Cannot send inventory data to server");
+// NEW: LOG_ERROR("WiFi Disconnected - Cannot send inventory data to server", "WiFi");
+
+// In updateInventoryLevels() function (around line 338):
+// OLD: Serial.printf("[Inventory] Rice A: %.2fkg/%.1fkg (%.1f%%), Rice B: %.2fkg/%.1fkg (%.1f%%)\n", ...);
+// NEW: LOG_INFO("Inventory levels updated", "Inventory");
+
+// In loop() function for payment processing (around line 1374):
+// OLD: Serial.println("[System] Amount reached! Showing start prompt...");
+// NEW: LOG_INFO("Amount reached! Showing start prompt...", "System");
+
+// In loop() function for dispensing (around line 1442):
+// OLD: Serial.println("[System] Starting dispensing process...");
+// NEW: LOG_INFO("Starting dispensing process...", "System");
+
+// In loop() function for dispensing completion (around line 1516):
+// OLD: Serial.println("[System] Dispensing complete! Closing dispenser...");
+// NEW: LOG_INFO("Dispensing complete! Closing dispenser...", "System");
+
+// In loop() function for system reset (around line 1540):
+// OLD: Serial.println("[System] Resetting system...");
+// NEW: LOG_INFO("Resetting system...", "System");
+
+// 5. ADD LOGGING FOR ERROR CONDITIONS:
+
+// In isRiceExpired() function (around line 511):
+// OLD: Serial.println("[Expiration] WiFi not connected - cannot check current date");
+// NEW: LOG_WARNING("WiFi not connected - cannot check current date", "Expiration");
+
+// In loop() function for WiFi status (around line 864):
+// OLD: Serial.println("[WiFi] Connection lost! Attempting to reconnect...");
+// NEW: LOG_WARNING("Connection lost! Attempting to reconnect...", "WiFi");
+
+// 6. ADD LOGGING FOR CRITICAL EVENTS:
+
+// In loop() function when transaction is confirmed (around line 1381):
+// ADD: LOG_INFO("Transaction recorded with ID: " + String(currentTransactionId), "Transaction");
+
+// In loop() function when custom purchase is confirmed (around line 1415):
+// ADD: LOG_INFO("Custom transaction recorded with ID: " + String(currentTransactionId), "Transaction");
+
+// In printReceipt() function (around line 592):
+// ADD: LOG_INFO("Receipt printed for transaction ID: " + String(transactionId), "Printer");

@@ -1,0 +1,50 @@
+# PHP
+*.log
+*.tmp
+*.cache
+vendor/
+composer.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Temporary files
+temp_reports/
+*.pdf
+test_*.pdf
+
+# Database files (if any local dumps)
+*.sql.backup
+*.db
+
+# Logs
+logs/
+*.log
+
+# Cache
+cache/
+tmp/
+
+# Uploads (if you have user uploads)
+uploads/
+
+# Node modules (if using any frontend build tools)
+node_modules/
+npm-debug.log*
+
+# Build artifacts
+build/
+dist/

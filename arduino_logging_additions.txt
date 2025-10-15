@@ -1,0 +1,62 @@
+// Add this to the Arduino code - logging functionality
+// Add this URL constant near the other URL constants (around line 45)
+const char* logsUrl = "https://orange-donkey-160020.hostingersite.com/rice_dispenser_iot-master/arduino_logs_api.php";
+
+// Add this function to send logs to server (add after the sendInventoryToServer function)
+void sendLogToServer(String level, String message, String category = "") {
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("[Log] Sending log to server: " + level + " - " + message);
+    
+    HTTPClient http;
+    http.begin(logsUrl);
+    http.addHeader("Content-Type", "application/json");
+    
+    // Create JSON payload
+    String jsonPayload = "{";
+    jsonPayload += "\"machine_id\":\"rice_dispenser_1\",";
+    jsonPayload += "\"log_level\":\"" + level + "\",";
+    jsonPayload += "\"log_message\":\"" + message + "\"";
+    if (category.length() > 0) {
+      jsonPayload += ",\"log_category\":\"" + category + "\"";
+    }
+    jsonPayload += "}";
+    
+    Serial.println("[Log] JSON payload: " + jsonPayload);
+    
+    int httpResponseCode = http.POST(jsonPayload);
+    
+    if (httpResponseCode > 0) {
+      Serial.printf("[Log] HTTP Response code: %d\n", httpResponseCode);
+      String response = http.getString();
+      Serial.println("[Log] Server response: " + response);
+    } else {
+      Serial.printf("[Log] Error sending log: %s\n", http.errorToString(httpResponseCode).c_str());
+    }
+    http.end();
+  } else {
+    Serial.println("[Log] WiFi Disconnected - Cannot send log to server");
+  }
+}
+
+// Add this macro for easy logging (add near the top with other defines)
+#define LOG_DEBUG(msg, cat) do { Serial.println("[DEBUG] " + String(msg)); sendLogToServer("DEBUG", String(msg), String(cat)); } while(0)
+#define LOG_INFO(msg, cat) do { Serial.println("[INFO] " + String(msg)); sendLogToServer("INFO", String(msg), String(cat)); } while(0)
+#define LOG_WARNING(msg, cat) do { Serial.println("[WARNING] " + String(msg)); sendLogToServer("WARNING", String(msg), String(cat)); } while(0)
+#define LOG_ERROR(msg, cat) do { Serial.println("[ERROR] " + String(msg)); sendLogToServer("ERROR", String(msg), String(cat)); } while(0)
+#define LOG_SYSTEM(msg, cat) do { Serial.println("[SYSTEM] " + String(msg)); sendLogToServer("SYSTEM", String(msg), String(cat)); } while(0)
+
+// Example usage - replace existing Serial.println calls with these:
+// Instead of: Serial.println("[WiFi] Connected to " + String(wifi_ssid_1));
+// Use: LOG_INFO("Connected to " + String(wifi_ssid_1), "WiFi");
+
+// Instead of: Serial.println("[Database] Attempting to connect to database...");
+// Use: LOG_INFO("Attempting to connect to database...", "Database");
+
+// Instead of: Serial.printf("[Button] A pressed - rice selection triggered\n");
+// Use: LOG_DEBUG("Button A pressed - rice selection triggered", "Button");
+
+// Instead of: Serial.println("[System] Amount reached! Showing start prompt...");
+// Use: LOG_INFO("Amount reached! Showing start prompt...", "System");
+
+// Instead of: Serial.println("[WiFi] WiFi Disconnected - Cannot send data to database");
+// Use: LOG_ERROR("WiFi Disconnected - Cannot send data to database", "WiFi");
