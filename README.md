@@ -45,18 +45,25 @@ git clone https://github.com/simonfab18/IoT_Rice_Vending_Machine.git
 
 4. Web Interface:
    - Place all PHP files in your XAMPP htdocs directory
-   - Access the dashboard at `http://localhost/rice_dispenser_iot-master/main.php`
+   - Access the dashboard at `http://localhost/IoT_Rice_Vending_Machine/master/main.php`
 
 ## File Structure
 
-- `rice.ino` - ESP32 Arduino code
-- `rice_dispenser.sql` - Database schema
-- `database.php` - Database configuration
-- `upload.php` - API endpoint for ESP32
-- `main.php` - Dashboard
-- `transaction.php` - Transaction history
-- `alerts.php` - System alerts
-- `style.css` - Styling
+```
+IoT_Rice_Vending_Machine/
+├── master/                    # Main project files
+│   ├── rice.ino              # ESP32 Arduino code
+│   ├── rice_dispenser.sql    # Database schema
+│   ├── database.php          # Database configuration
+│   ├── upload.php            # API endpoint for ESP32
+│   ├── main.php              # Dashboard
+│   ├── transaction.php       # Transaction history
+│   ├── alerts.php            # System alerts
+│   ├── style.css             # Styling
+│   └── ...                   # Other project files
+├── README.md                 # Project documentation
+└── .gitignore               # Git ignore rules
+```
 
 ## Usage
 
