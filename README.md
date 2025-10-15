@@ -1,4 +1,4 @@
-# Rice Dispenser IoT System
+# IoT Rice Vending Machine
 
 An automated rice dispensing system with IoT capabilities, built using ESP32 and PHP/MySQL.
 
@@ -30,11 +30,11 @@ An automated rice dispensing system with IoT capabilities, built using ESP32 and
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Anoncasphil/rice_dispenser_iot.git
+git clone https://github.com/simonfab18/IoT_Rice_Vending_Machine.git
 ```
 
 2. Set up the database:
-   - Import `database.sql` to your MySQL server
+   - Import `rice_dispenser.sql` to your MySQL server
    - Configure database connection in `database.php`
 
 3. Configure ESP32:
@@ -45,12 +45,12 @@ git clone https://github.com/Anoncasphil/rice_dispenser_iot.git
 
 4. Web Interface:
    - Place all PHP files in your XAMPP htdocs directory
-   - Access the dashboard at `http://localhost/rice/main.php`
+   - Access the dashboard at `http://localhost/rice_dispenser_iot-master/main.php`
 
 ## File Structure
 
 - `rice.ino` - ESP32 Arduino code
-- `database.sql` - Database schema
+- `rice_dispenser.sql` - Database schema
 - `database.php` - Database configuration
 - `upload.php` - API endpoint for ESP32
 - `main.php` - Dashboard
@@ -76,4 +76,4 @@ git clone https://github.com/Anoncasphil/rice_dispenser_iot.git
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License - see the LICENSE file for details.
